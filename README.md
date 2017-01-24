@@ -2,7 +2,6 @@
 
 # Continuous Integration for a Node JS application with Custom Docker Image
 [![Run Status](https://api.shippable.com/projects/5886d1fc11c45a1000afd38b/badge?branch=master)](https://app.shippable.com/projects/5886d1fc11c45a1000afd38b)
-[![Coverage Badge](https://api.shippable.com/projects/5886d1fc11c45a1000afd38b/coverageBadge?branch=master)](https://app.shippable.com/projects/5886d1fc11c45a1000afd38b)
 
 A simple Node JS application that is using a custom built Ubuntu 16.04 build image 
 using Docker. Upon building it, the newly built image is booted, the repo cloned
