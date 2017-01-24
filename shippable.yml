@@ -45,7 +45,7 @@ build:
     - popd
     # creating some random artifact here
     - mkdir -p /app
-    - echo 'export build_nbr=$BUILD_NUMBER` > /app/someExec.sh
+    - echo 'export build_nbr=$BUILD_NUMBER' > /app/someExec.sh
     - chmod +x /app/someExec.sh
 
   # http://docs.shippable.com/ci/shippableyml/#post_ci
