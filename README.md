@@ -1,13 +1,16 @@
-![AyeAye](https://github.com/shippableSamples/ci-with-custom-ubuntu1604-build-image/blob/master/public/resources/images/captain.png)
+![AyeAye](https://github.com/shippableSamples/saving-ci-artifacts-in-a-docker-image/blob/master/public/resources/images/captain.png)
 
 # Continuous Integration for a Node JS application with Custom Docker Image
-[![Run Status](https://api.shippable.com/projects/58867b6befe2310f0068ba75/badge?branch=master)](https://app.shippable.com/projects/58867b6befe2310f0068ba75)
-[![Coverage Badge](https://api.shippable.com/projects/58867b6befe2310f0068ba75/coverageBadge?branch=master)](https://app.shippable.com/projects/58867b6befe2310f0068ba75)
+[![Run Status](https://api.shippable.com/projects/5886d1fc11c45a1000afd38b/badge?branch=master)](https://app.shippable.com/projects/5886d1fc11c45a1000afd38b)
+[![Coverage Badge](https://api.shippable.com/projects/5886d1fc11c45a1000afd38b/coverageBadge?branch=master)](https://app.shippable.com/projects/5886d1fc11c45a1000afd38b)
 
 A simple Node JS application that is using a custom built Ubuntu 16.04 build image 
 using Docker. Upon building it, the newly built image is booted, the repo cloned
 inside it and then CI tests with mocha and istanbul and executed. If these tests
-pass, the custom build image is then pushed to Docker Hub as an immutable image
+pass, the custom build image is then pushed to Docker Hub as an immutable image.
+We also create an artifact during the post_ci step which will be saved as we are 
+re-tagging the pre_ci image in post_ci section so that the state of ci is persistend
+
 
 ## Run CI for this repo on Shippable
 * Fork this repo into your local repo
@@ -22,7 +25,7 @@ pass, the custom build image is then pushed to Docker Hub as an immutable image
 ## CI Reports on Shippable
 
 ### CI Integration View
-![CI Integration View](https://github.com/shippableSamples/ci-with-custom-ubuntu1604-build-image/blob/master/public/resources/images/integration.jpg)
+![CI Integration View](https://github.com/shippableSamples/saving-ci-artifacts-in-a-docker-image/blob/master/public/resources/images/integration.jpg)
 
 ### CI Console Output
-![CI Console Output](https://github.com/shippableSamples/ci-with-custom-ubuntu1604-build-image/blob/master/public/resources/images/console.jpg)
+![CI Console Output](https://github.com/shippableSamples/saving-ci-artifacts-in-a-docker-image/blob/master/public/resources/images/console.jpg)
