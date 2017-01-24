@@ -1,0 +1,77 @@
+# Language setting http://docs.shippable.com/ci/languages/node/
+language: node_js
+
+# use this to control what branches get built.
+# http://docs.shippable.com/ci/advancedOptions/branches/
+branches:
+  only:
+    - master
+
+# using pre-defined build variables
+# full list http://docs.shippable.com/ci/advancedOptions/environmentVariables/
+env:
+  global:
+    - TEST_RESULTS_DIR=$SHIPPABLE_REPO_DIR/shippable/testresults
+    - CODE_COVERAGE_DIR=$SHIPPABLE_REPO_DIR/shippable/codecoverage
+    - TESTS_LOC_DIR=$SHIPPABLE_REPO_DIR/tests
+    - MOD_LOC=$SHIPPABLE_REPO_DIR/node_modules/.bin/
+    - DOCKER_REPO=ci-with-custom-ubuntu1604-build-image
+    - DOCKER_ACC=avinci # {account name}
+    - DOCKER_TAG=preci
+
+build:
+  # http://docs.shippable.com/ci/shippableyml/#pre_ci
+  pre_ci:
+    - docker build -t $DOCKER_ACC/$DOCKER_REPO:$DOCKER_TAG .
+
+  # boot the image that we just built
+  # http://docs.shippable.com/ci/shippableyml/#pre_ci_boot
+  pre_ci_boot:
+    image_name: $DOCKER_ACC/$DOCKER_REPO
+    image_tag: $DOCKER_TAG
+    pull: false
+    options: '--privileged=true --net=bridge -e FOO=$DOCKER_TAG'
+
+  # http://docs.shippable.com/ci/shippableyml/#ci
+  ci:
+    # npm mirrors can sometimes be flacky, better to use shippable_retry
+    - node --version
+    - echo $FOO
+    # http://docs.shippable.com/ci/advancedOptions/retry/
+    - shippable_retry npm install
+    - mkdir -p $TEST_RESULTS_DIR && mkdir -p $CODE_COVERAGE_DIR
+    - pushd $TESTS_LOC_DIR
+    - $MOD_LOC/mocha --recursive "$TESTS_LOC_DIR/**/*.spec.js" -R mocha-junit-reporter --reporter-options mochaFile=$TEST_RESULTS_DIR/testresults.xml
+    - popd
+    # creating some random artifact here
+    - mkdir -p /app
+    - echo 'export build_nbr=$BUILD_NUMBER` > /app/someExec.sh
+    - chmod +x /app/someExec.sh
+
+  # http://docs.shippable.com/ci/shippableyml/#post_ci
+  post_ci:
+    # first save the preci image as a new tag. This ensures state of preci container
+    # that was booted and CI process being run is preserved i.e. ci: section
+    - docker tag -f $DOCKER_ACC/$DOCKER_REPO:$DOCKER_TAG $DOCKER_ACC/$DOCKER_REPO:postci
+    # Now push the newly created, this has the /app/someExec.sh file
+    - docker push $DOCKER_ACC/$DOCKER_REPO:postci
+
+# Integrations are used to connect external resources to CI
+# http://docs.shippable.com/integrations/overview/
+integrations:
+
+  # http://docs.shippable.com/ci/shippableyml/#notifications
+  notifications:
+    # turning of email for PR builds, get notified only on failure and change in status
+    # http://docs.shippable.com/integrations/notifications/email/
+    - integrationName: email
+      type: email
+      on_success: change
+      on_failure: always
+      on_pull_request: never
+
+  # adding docker hub integration so that credentials are available to CI Job
+  # http://docs.shippable.com/integrations/imageRegistries/dockerHub/
+  hub:
+    - integrationName: shipDH
+      type: docker
